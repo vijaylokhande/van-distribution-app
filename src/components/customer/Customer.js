@@ -3,8 +3,8 @@ import { getCall, putCall, postCall, deleteCall } from '../../service/RestClient
 import { Container, Card, Button, ButtonGroup , Badge } from 'react-bootstrap';
 import { IN_PROGRESS } from '../../constants/ActionConstants';
 import { connect } from "react-redux";
-import { LIST_EMPLOYEE } from '../../constants/AppConstants';
-import { SET_EMPLOYEE } from '../../constants/ActionConstants';
+import { LIST_CUSTOMER } from '../../constants/AppConstants';
+import { SET_CUSTOMER } from '../../constants/ActionConstants';
 
 import { pageinationOptions, ACTIVE_STATUS_OPTIONS } from '../../util/tableUtil'
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -15,7 +15,7 @@ import _ from 'underscore';
 
 import { FaFilter, FaPlusCircle, FaSave, FaTrash } from 'react-icons/fa'
 
-class Employee extends Component {
+class Customer extends Component {
 
     constructor(props) {
         super(props);
@@ -29,14 +29,14 @@ class Employee extends Component {
     }
 
     componentDidMount() {
-        this.listEmployee();
+        this.listCustomer();
     }
 
-    listEmployee = () => {
+    listCustomer = () => {
         this.props.setInProgress(true);
-        getCall(LIST_EMPLOYEE).then(res => {
+        getCall(LIST_CUSTOMER).then(res => {
             if (res.status === 200) {
-                this.props.listEmployee(res.data);
+                this.props.listCustomer(res.data);
                 this.props.setInProgress(false);
             }
             else {
@@ -60,20 +60,19 @@ class Employee extends Component {
     addNewEmpltyRecord = () => {
 
         this.props.setInProgress(true);
-        var employeeData = this.props.employee;
-        employeeData.data.unshift({
-            EMP_ID: null,
-            EMP_NAME: null,
-            EMP_CONTACT: null,
-            EMP_ADDRESS: null,
-            DESIGNATION_ID: null,
-            EMP_WAREHOUSE_ID: null,
-            ID_PROOF_TYPE: null,
-            ID_PROOF_DETAILS: null,
-            EMP_DOB: Date.now(),
-            ACTIVE_STATUS: false
+        var customerData = this.props.customer;
+        customerData.data.unshift({            
+                CUST_ID: null,
+                CUST_NAME: null,
+                SHOP_NAME: null,
+                CUST_CONTACT: null,
+                CUST_GST_NO: null,
+                CUST_ADDRESS: null,
+                OUTSTANDING: null,
+                CUST_DOB: null,
+                ACTIVE_STATUS: false
         });
-        this.props.addNewEmpltyRecord(employeeData);
+        this.props.addNewEmpltyRecord(customerData);
         this.props.setInProgress(false);
     }
 
@@ -84,17 +83,18 @@ class Employee extends Component {
     updateAndSave = (cell, row, rowIndex) => {
         this.props.setInProgress(true);
         if (row !== null && row !== undefined) {
-            if (row.EMP_ID === null || row.EMP_ID === undefined || row.EMP_ID === "") { // add new record
-                var data = {};
-                data["EMP_ID"] = row.EMP_ID;
-                data["EMP_NAME"] = row.EMP_NAME;
-                data["EMP_CONTACT"] = row.EMP_CONTACT;
-                data["EMP_ADDRESS"] = row.EMP_ADDRESS;
-                data["ID_PROOF_TYPE"] = parseInt(row.ID_PROOF_TYPE);
-                data["ID_PROOF_DETAILS"] = row.ID_PROOF_DETAILS;
-                data["EMP_DOB"] = row.EMP_DOB;
-                data["DESIGNATION_ID"] = parseInt(row.DESIGNATION_ID);
-                data["EMP_WAREHOUSE_ID"] = parseInt(row.EMP_WAREHOUSE_ID);
+            if (row.CUST_ID === null || row.CUST_ID === undefined || row.CUST_ID === "") { // add new record
+                var data = {};    
+                
+                data["CUST_ID"] = row.CUST_ID;
+                data["CUST_NAME"] = row.CUST_NAME;
+                data["SHOP_NAME"] = row.SHOP_NAME;
+                data["CUST_CONTACT"] = row.CUST_CONTACT;
+                data["CUST_GST_NO"] = row.CUST_GST_NO;
+                data["CUST_ADDRESS"] = row.CUST_ADDRESS;
+                data["OUTSTANDING"] = row.OUTSTANDING;
+                data["CUST_DOB"] = row.CUST_DOB;                
+                data["ACTIVE_STATUS"] = false;
 
                 var _typeof = typeof row.ACTIVE_STATUS
                 if (_typeof === "string") {
@@ -103,9 +103,9 @@ class Employee extends Component {
                 }
                 data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
 
-                postCall(LIST_EMPLOYEE, data).then(res => {
+                postCall(LIST_CUSTOMER, data).then(res => {
                     if (res.status === 201) {
-                        this.listEmployee();
+                        this.listCustomer();
                         this.props.setInProgress(false);
                     }
                     else {
@@ -120,15 +120,15 @@ class Employee extends Component {
             else { // update record
                 var data = {};
 
-                data["EMP_ID"] = row.EMP_ID;
-                data["EMP_NAME"] = row.EMP_NAME;
-                data["EMP_CONTACT"] = row.EMP_CONTACT;
-                data["EMP_ADDRESS"] = row.EMP_ADDRESS;
-                data["ID_PROOF_TYPE"] = parseInt(row.ID_PROOF_TYPE);
-                data["ID_PROOF_DETAILS"] = row.ID_PROOF_DETAILS;
-                data["EMP_DOB"] = row.EMP_DOB;
-                data["DESIGNATION_ID"] = parseInt(row.DESIGNATION_ID);
-                data["EMP_WAREHOUSE_ID"] = parseInt(row.EMP_WAREHOUSE_ID);
+                data["CUST_ID"] = row.CUST_ID;
+                data["CUST_NAME"] = row.CUST_NAME;
+                data["SHOP_NAME"] = row.SHOP_NAME;
+                data["CUST_CONTACT"] = row.CUST_CONTACT;
+                data["CUST_GST_NO"] = row.CUST_GST_NO;
+                data["CUST_ADDRESS"] = row.CUST_ADDRESS;
+                data["OUTSTANDING"] = row.OUTSTANDING;
+                data["CUST_DOB"] = row.CUST_DOB;                
+                data["ACTIVE_STATUS"] = false;
 
                 var _typeof = typeof row.ACTIVE_STATUS
                 if (_typeof === "string") {
@@ -137,9 +137,9 @@ class Employee extends Component {
                 }
                 data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
 
-                putCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID), data).then(res => {
+                putCall(LIST_CUSTOMER.concat("/").concat(row.EMP_ID), data).then(res => {
                     if (res.status === 200) {
-                        this.listEmployee();
+                        this.listCustomer();
                         this.props.setInProgress(false);
                     }
                     else {
@@ -159,14 +159,14 @@ class Employee extends Component {
 
     deleteAndSave = (cell, row, rowIndex) => {
         if (row !== null && row !== undefined) {
-            if (row.EMP_ID === null || row.EMP_ID === undefined || row.EMP_ID === "") { // delete from cache
-                this.listEmployee();
+            if (row.PRODUCT_ID === null || row.PRODUCT_ID === undefined || row.PRODUCT_ID === "") { // delete from cache
+                this.listCustomer();
             }
             else {  // delete from db                
                 this.props.setInProgress(true);
-                deleteCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID)).then(res => {
+                deleteCall(LIST_CUSTOMER.concat("/").concat(row.PRODUCT_ID)).then(res => {
                     if (res.status === 200) {
-                        this.listEmployee();
+                        this.listCustomer();
                         this.props.setInProgress(false);
                     }
                     else {
@@ -200,42 +200,11 @@ class Employee extends Component {
             var keys = Object.keys(data);
 
             var columnsArray = keys.map(key => {
-                if (key === 'ID_PROOF_TYPE' || key === 'DESIGNATION_ID') {
-
-                    var obj = {
-                        dataField: key,
-                        text: key,
-                        sort: true,
-                        filter: this.state.toggleFilter ? textFilter() : false,
-                        editor: {
-                            type: Type.SELECT
-                        },                        
-                        formatter : (cell)=>{  
-                                                         
-                            if(cell !== undefined && cell !==null && cell !==""){                          
-                            
-                            var option=_.find(obj.editor.options,function(opn){                                  
-                                return opn.value==cell;                                
-                            }); 
-
-                            if(option!==undefined)           
-                            return (option.label);
-                            }
-                        }
-                    };
-
-                    if (key === 'ID_PROOF_TYPE') {
-                        obj.editor.options = this.getConfiguration("ID_PROOF");                        
-                    }
-                    else if (key === 'DESIGNATION_ID') {
-                        obj.editor.options = this.getConfiguration("EMPLOYEE_DESIGNATION");
-                    }                    
-                    return obj;
-                }
-                else if(key === 'ACTIVE_STATUS'){
+                
+                 if(key === 'ACTIVE_STATUS'){
                     return {
                     dataField: key,
-                    text: key,
+                    text: 'STATUS',
                     sort: true,
                     type:'bool',
                     editor :{
@@ -248,7 +217,7 @@ class Employee extends Component {
                     filter: this.state.toggleFilter ? textFilter() : false
                     };
                 }
-                else if (key === 'EMP_DOB') {
+                else if (key === 'CUST_DOB') {
                     return {
                         dataField: key,
                         text: key,
@@ -295,7 +264,7 @@ class Employee extends Component {
                 formatter: this.actionButton,
                 editable: false,
                 headerStyle: () => {
-                    return { width: "8%" };
+                    return { width: "6%" };
                 },
             });
 
@@ -308,7 +277,7 @@ class Employee extends Component {
         return (
             <Container fluid className="app-container">
                 <Card>
-                    <Card.Header as="span">Employee
+                    <Card.Header as="span">customer
                     <ButtonGroup size="sm" style={{ float: "right", marginBottom: "2px" }}>
                             <Button variant="success" size="sm" onClick={() => { this.addNewEmpltyRecord() }}><FaPlusCircle />  Add New</Button>
                             <Button variant="success" size="sm" onClick={() => { this.toggleFilter() }}><FaFilter />  Filter</Button>
@@ -318,20 +287,20 @@ class Employee extends Component {
                     <Card.Body>
 
                         {
-                            this.props.employee !== undefined && this.props.employee !== null &&
-                                this.props.employee.data !== undefined && this.props.employee.data !== null ? (
+                            this.props.customer !== undefined && this.props.customer !== null &&
+                                this.props.customer.data !== undefined && this.props.customer.data !== null ? (
                                     <div>
                                         <BootstrapTable
-                                            keyField="EMP_ID"
-                                            data={this.props.employee.data}
-                                            columns={this.getTableColumn(this.props.employee.data[0])}
+                                            keyField="CUST_ID"
+                                            data={this.props.customer.data}
+                                            columns={this.getTableColumn(this.props.customer.data[0])}
                                             striped
                                             bootstrap4
                                             hover
                                             condensed
                                             tabIndexCell
                                             filter={filterFactory()}
-                                            pagination={paginationFactory(pageinationOptions(this.props.employee.data.length))}
+                                            pagination={paginationFactory(pageinationOptions(this.props.customer.data.length))}
                                             headerWrapperClasses="tbl-head"
                                             cellEdit={cellEditFactory({
                                                 mode: 'click',
@@ -351,14 +320,14 @@ class Employee extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
     setInProgress: flag => dispatch({ type: IN_PROGRESS, payload: flag }),
-    listEmployee: data => dispatch({ type: SET_EMPLOYEE, payload: data }),
-    addNewEmpltyRecord: data => dispatch({ type: SET_EMPLOYEE, payload: data })
+    listCustomer: data => dispatch({ type: SET_CUSTOMER, payload: data }),
+    addNewEmpltyRecord: data => dispatch({ type: SET_CUSTOMER, payload: data })
 });
 
 const mapStateToProps = (state) => ({
     inProgress: state.config.inProgress,
     configuration: state.config.configuration,
-    employee: state.emp.employee
+    customer: state.customer.customer
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Employee);
+export default connect(mapStateToProps, mapDispatchToProps)(Customer);

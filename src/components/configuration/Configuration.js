@@ -3,12 +3,12 @@ import { connect } from "react-redux";
 import { getCall, postCall, deleteCall, putCall } from '../../service/RestClient';
 import { IN_PROGRESS, SET_APP_CONFIGURATION } from '../../constants/ActionConstants';
 import { LIST_APP_CONFIGURATION } from '../../constants/AppConstants';
-import { pageinationOptions } from '../../util/tableUtil'
-import { Container, Card, Button, ButtonGroup } from 'react-bootstrap';
+import { pageinationOptions, ACTIVE_STATUS_OPTIONS, PROPERTY_TYPES_OPTIONS } from '../../util/tableUtil'
+import { Container, Card, Button, ButtonGroup ,Badge} from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import cellEditFactory , {Type} from 'react-bootstrap-table2-editor';
+import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import _ from 'underscore';
 
 import { FaFilter, FaPlusCircle, FaSave, FaTrash } from 'react-icons/fa'
@@ -84,10 +84,10 @@ class Configuration extends Component {
                 data["PROPERTY_TYPE"] = row.PROPERTY_TYPE;
                 data["PROPERTY_VALUE"] = row.PROPERTY_VALUE;
 
-                var _typeof= typeof row.ACTIVE_STATUS
-                if(_typeof === "string"){
-                    if(row.ACTIVE_STATUS==="true") {row.ACTIVE_STATUS=true;}
-                    else  { row.ACTIVE_STATUS=false};
+                var _typeof = typeof row.ACTIVE_STATUS
+                if (_typeof === "string") {
+                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
+                    else { row.ACTIVE_STATUS = false };
                 }
                 data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
 
@@ -111,13 +111,13 @@ class Configuration extends Component {
                 data["PROPERTY_TYPE"] = row.PROPERTY_TYPE;
                 data["PROPERTY_VALUE"] = row.PROPERTY_VALUE;
 
-                var _typeof= typeof row.ACTIVE_STATUS
-                if(_typeof === "string"){
-                    if(row.ACTIVE_STATUS==="true") {row.ACTIVE_STATUS=true;}
-                    else  { row.ACTIVE_STATUS=false};
+                var _typeof = typeof row.ACTIVE_STATUS
+                if (_typeof === "string") {
+                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
+                    else { row.ACTIVE_STATUS = false };
                 }
-                data["ACTIVE_STATUS"] =  row.ACTIVE_STATUS;
-                
+                data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
+
                 putCall(LIST_APP_CONFIGURATION.concat("/").concat(row.PROPERTY_ID), data).then(res => {
                     if (res.status === 200) {
                         this.listConfiguration();
@@ -175,51 +175,57 @@ class Configuration extends Component {
         )
     };
 
-  
+
 
 
     getTableColumn = (data) => {
         if (data !== null && data !== undefined) {
 
 
-            var keys = Object.keys(data);    
-            
-            keys=_.without(keys,"ACTIVE_STATUS");
+            var keys = Object.keys(data);
 
-            var columnsArray = keys.map(key => (
-                this.state.toggleFilter ?
-                    {
-                        "dataField": key,
-                        "text": key,
-                        "sort": true,
-                        filter: textFilter()
-                    }
-                    :
-                    {
-                        "dataField": key,
-                        "text": key,
-                        "sort": true
-                    }
+            var columnsArray = keys.map(key => {
 
-            ));
-
-            columnsArray.push({
-                dataField:"ACTIVE_STATUS",
-                text: "ACTIVE_STATUS",
-                editor: {
-                    type: Type.SELECT,
-                    options :[
-                        {
-                            value:true,
-                            label:"true"
+                if (key === 'ACTIVE_STATUS') {
+                    return {
+                        dataField: key,
+                        text: key,
+                        sort: true,
+                        type: 'bool',
+                        editor: {
+                            type: Type.CHECKBOX,
+                            value: 'true:false'
                         },
-                        {
-                            value:false,
-                            label:"false"
-                        }
-                    ]
+                        formatter: (cell) => {
+                            return cell ? (<Badge variant="success">Active</Badge>) : (<Badge variant="danger">InActive</Badge>)
+                        },
+                        filter: this.state.toggleFilter ? textFilter() : false
+                    };
                 }
-            })
+                else if (key === 'PROPERTY_TYPE') {
+                    return {
+                        dataField: "PROPERTY_TYPE",
+                        text: "PROPERTY_TYPE",
+                        sort: true,
+                        editor: {
+                            type: Type.SELECT,
+                            options: PROPERTY_TYPES_OPTIONS
+                        },
+                        filter: this.state.toggleFilter ? textFilter() : false
+                    };
+                }
+                else {
+                    return {
+                        dataField: key,
+                        text: key,
+                        sort: true,
+                        filter: this.state.toggleFilter ? textFilter() : false
+                    };
+
+                }
+
+
+            });
 
             columnsArray.push({
                 text: "ACTION",
@@ -227,7 +233,7 @@ class Configuration extends Component {
                 editable: false
             })
 
-            
+
             return columnsArray
         }
         return [];
@@ -258,6 +264,7 @@ class Configuration extends Component {
                                             hover
                                             condensed
                                             tabIndexCell
+                                            bootstrap4
                                             filter={filterFactory()}
                                             pagination={paginationFactory(pageinationOptions(this.props.configuration.data.length))}
                                             headerWrapperClasses="tbl-head"

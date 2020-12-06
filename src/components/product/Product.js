@@ -3,8 +3,8 @@ import { getCall, putCall, postCall, deleteCall } from '../../service/RestClient
 import { Container, Card, Button, ButtonGroup , Badge } from 'react-bootstrap';
 import { IN_PROGRESS } from '../../constants/ActionConstants';
 import { connect } from "react-redux";
-import { LIST_EMPLOYEE } from '../../constants/AppConstants';
-import { SET_EMPLOYEE } from '../../constants/ActionConstants';
+import { LIST_PRODUCT } from '../../constants/AppConstants';
+import { SET_PRODUCT } from '../../constants/ActionConstants';
 
 import { pageinationOptions, ACTIVE_STATUS_OPTIONS } from '../../util/tableUtil'
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -15,7 +15,7 @@ import _ from 'underscore';
 
 import { FaFilter, FaPlusCircle, FaSave, FaTrash } from 'react-icons/fa'
 
-class Employee extends Component {
+class Product extends Component {
 
     constructor(props) {
         super(props);
@@ -29,14 +29,14 @@ class Employee extends Component {
     }
 
     componentDidMount() {
-        this.listEmployee();
+        this.listProduct();
     }
 
-    listEmployee = () => {
+    listProduct = () => {
         this.props.setInProgress(true);
-        getCall(LIST_EMPLOYEE).then(res => {
+        getCall(LIST_PRODUCT).then(res => {
             if (res.status === 200) {
-                this.props.listEmployee(res.data);
+                this.props.listProduct(res.data);
                 this.props.setInProgress(false);
             }
             else {
@@ -60,20 +60,23 @@ class Employee extends Component {
     addNewEmpltyRecord = () => {
 
         this.props.setInProgress(true);
-        var employeeData = this.props.employee;
-        employeeData.data.unshift({
-            EMP_ID: null,
-            EMP_NAME: null,
-            EMP_CONTACT: null,
-            EMP_ADDRESS: null,
-            DESIGNATION_ID: null,
-            EMP_WAREHOUSE_ID: null,
-            ID_PROOF_TYPE: null,
-            ID_PROOF_DETAILS: null,
-            EMP_DOB: Date.now(),
+        var productData = this.props.product;
+        productData.data.unshift({
+            PRODUCT_ID : null,
+            PRODUCT_CODE : null,
+            PRODUCT_NAME : null,
+            HSN_CODE : null,
+            PRODUCT_DESC : null,
+            PROD_COMPANY_ID: null,
+            PROD_UNIT_ID : null,
+            PROD_UNIT_QUANTITY : null,
+            PRODUCT_MRP: null,
+            PROD_CGST_PER: null,
+            PROD_SGST_PER: null,
+            PRODUCT_RATE: null,
             ACTIVE_STATUS: false
         });
-        this.props.addNewEmpltyRecord(employeeData);
+        this.props.addNewEmpltyRecord(productData);
         this.props.setInProgress(false);
     }
 
@@ -84,17 +87,22 @@ class Employee extends Component {
     updateAndSave = (cell, row, rowIndex) => {
         this.props.setInProgress(true);
         if (row !== null && row !== undefined) {
-            if (row.EMP_ID === null || row.EMP_ID === undefined || row.EMP_ID === "") { // add new record
-                var data = {};
-                data["EMP_ID"] = row.EMP_ID;
-                data["EMP_NAME"] = row.EMP_NAME;
-                data["EMP_CONTACT"] = row.EMP_CONTACT;
-                data["EMP_ADDRESS"] = row.EMP_ADDRESS;
-                data["ID_PROOF_TYPE"] = parseInt(row.ID_PROOF_TYPE);
-                data["ID_PROOF_DETAILS"] = row.ID_PROOF_DETAILS;
-                data["EMP_DOB"] = row.EMP_DOB;
-                data["DESIGNATION_ID"] = parseInt(row.DESIGNATION_ID);
-                data["EMP_WAREHOUSE_ID"] = parseInt(row.EMP_WAREHOUSE_ID);
+            if (row.PRODUCT_ID === null || row.PRODUCT_ID === undefined || row.PRODUCT_ID === "") { // add new record
+                var data = {};        
+
+                data["PRODUCT_ID"] = row.PRODUCT_ID;
+                data["PRODUCT_CODE"] = row.PRODUCT_CODE;
+                data["PRODUCT_NAME"] = row.PRODUCT_NAME;
+                data["HSN_CODE"] = row.HSN_CODE;
+                data["PRODUCT_DESC"] = row.PRODUCT_DESC;
+                data["PROD_COMPANY_ID"] = row.PROD_COMPANY_ID;
+                data["PROD_UNIT_ID"] = row.PROD_UNIT_ID;
+                data["PROD_UNIT_QUANTITY"] = parseInt(row.PROD_UNIT_QUANTITY);
+                data["PRODUCT_MRP"] = parseFloat(row.PRODUCT_MRP);
+                data["PROD_CGST_PER"] = parseFloat(row.PROD_CGST_PER);
+                data["PROD_SGST_PER"] = parseFloat(row.PROD_SGST_PER);
+                data["PRODUCT_RATE"] = row.PRODUCT_RATE;
+                data["ACTIVE_STATUS"] = false;
 
                 var _typeof = typeof row.ACTIVE_STATUS
                 if (_typeof === "string") {
@@ -103,9 +111,9 @@ class Employee extends Component {
                 }
                 data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
 
-                postCall(LIST_EMPLOYEE, data).then(res => {
+                postCall(LIST_PRODUCT, data).then(res => {
                     if (res.status === 201) {
-                        this.listEmployee();
+                        this.listProduct();
                         this.props.setInProgress(false);
                     }
                     else {
@@ -120,15 +128,19 @@ class Employee extends Component {
             else { // update record
                 var data = {};
 
-                data["EMP_ID"] = row.EMP_ID;
-                data["EMP_NAME"] = row.EMP_NAME;
-                data["EMP_CONTACT"] = row.EMP_CONTACT;
-                data["EMP_ADDRESS"] = row.EMP_ADDRESS;
-                data["ID_PROOF_TYPE"] = parseInt(row.ID_PROOF_TYPE);
-                data["ID_PROOF_DETAILS"] = row.ID_PROOF_DETAILS;
-                data["EMP_DOB"] = row.EMP_DOB;
-                data["DESIGNATION_ID"] = parseInt(row.DESIGNATION_ID);
-                data["EMP_WAREHOUSE_ID"] = parseInt(row.EMP_WAREHOUSE_ID);
+                data["PRODUCT_ID"] = row.PRODUCT_ID;
+                data["PRODUCT_CODE"] = row.PRODUCT_CODE;
+                data["PRODUCT_NAME"] = row.PRODUCT_NAME;
+                data["HSN_CODE"] = row.HSN_CODE;
+                data["PRODUCT_DESC"] = row.PRODUCT_DESC;
+                data["PROD_COMPANY_ID"] = row.PROD_COMPANY_ID;
+                data["PROD_UNIT_ID"] = row.PROD_UNIT_ID;
+                data["PROD_UNIT_QUANTITY"] = parseInt(row.PROD_UNIT_QUANTITY);
+                data["PRODUCT_MRP"] = parseFloat(row.PRODUCT_MRP);
+                data["PROD_CGST_PER"] = parseFloat(row.PROD_CGST_PER);
+                data["PROD_SGST_PER"] = parseFloat(row.PROD_SGST_PER);
+                data["PRODUCT_RATE"] = [];
+                data["ACTIVE_STATUS"] = false;
 
                 var _typeof = typeof row.ACTIVE_STATUS
                 if (_typeof === "string") {
@@ -137,9 +149,9 @@ class Employee extends Component {
                 }
                 data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
 
-                putCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID), data).then(res => {
+                putCall(LIST_PRODUCT.concat("/").concat(row.EMP_ID), data).then(res => {
                     if (res.status === 200) {
-                        this.listEmployee();
+                        this.listProduct();
                         this.props.setInProgress(false);
                     }
                     else {
@@ -159,14 +171,14 @@ class Employee extends Component {
 
     deleteAndSave = (cell, row, rowIndex) => {
         if (row !== null && row !== undefined) {
-            if (row.EMP_ID === null || row.EMP_ID === undefined || row.EMP_ID === "") { // delete from cache
-                this.listEmployee();
+            if (row.PRODUCT_ID === null || row.PRODUCT_ID === undefined || row.PRODUCT_ID === "") { // delete from cache
+                this.listProduct();
             }
             else {  // delete from db                
                 this.props.setInProgress(true);
-                deleteCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID)).then(res => {
+                deleteCall(LIST_PRODUCT.concat("/").concat(row.PRODUCT_ID)).then(res => {
                     if (res.status === 200) {
-                        this.listEmployee();
+                        this.listProduct();
                         this.props.setInProgress(false);
                     }
                     else {
@@ -200,11 +212,11 @@ class Employee extends Component {
             var keys = Object.keys(data);
 
             var columnsArray = keys.map(key => {
-                if (key === 'ID_PROOF_TYPE' || key === 'DESIGNATION_ID') {
+                if (key === 'PROD_UNIT_ID' || key === 'PROD_COMPANY_ID') {
 
                     var obj = {
                         dataField: key,
-                        text: key,
+                        text: key=='PROD_UNIT_ID'? 'UNIT' : 'COMPANY',
                         sort: true,
                         filter: this.state.toggleFilter ? textFilter() : false,
                         editor: {
@@ -224,18 +236,18 @@ class Employee extends Component {
                         }
                     };
 
-                    if (key === 'ID_PROOF_TYPE') {
-                        obj.editor.options = this.getConfiguration("ID_PROOF");                        
+                    if (key === 'PROD_UNIT_ID') {
+                        obj.editor.options = this.getConfiguration("UNIT");                        
                     }
-                    else if (key === 'DESIGNATION_ID') {
-                        obj.editor.options = this.getConfiguration("EMPLOYEE_DESIGNATION");
+                    else if (key === 'PROD_COMPANY_ID') {
+                        obj.editor.options = this.getConfiguration("COMPANY");
                     }                    
                     return obj;
                 }
                 else if(key === 'ACTIVE_STATUS'){
                     return {
                     dataField: key,
-                    text: key,
+                    text: 'STATUS',
                     sort: true,
                     type:'bool',
                     editor :{
@@ -248,37 +260,35 @@ class Employee extends Component {
                     filter: this.state.toggleFilter ? textFilter() : false
                     };
                 }
-                else if (key === 'EMP_DOB') {
+                else if(key === 'PRODUCT_RATE'){
                     return {
-                        dataField: key,
-                        text: key,
-                        type:'date',
-                        filter: this.state.toggleFilter ? textFilter() : false,                        
-                        sort: true,
-                        headerStyle: () => {
-                            return { width: "10%" };
-                        },
-                        editor: {
-                            type: Type.DATE
-                        },
-                        formatter: (cell, row, rowIndex) => {
-                            
-                            var date = new Date(cell);
-                            var yyyy = date.getFullYear();
-                            var mm = date.getMonth() + 1;
-                            if (mm < 10) {
-                                mm = '0' + mm;
-                            }
-                            var dd = date.getDate();
-                            if (dd < 10) {
-                                dd = '0' + dd;
-                            }
-                            var ndt = yyyy + "-" + mm + "-" + dd;
-                            return ndt;
-                        },
-                        editable: true
-                    }
+                    dataField: key,
+                    text: key,
+                    sort: true,                    
+                    
+                    formatter : (cell)=>{ 
+                        
+                    //    var html= _.map(cell,function(item){
+                    //     return(<div>
+                    //             <input value={item.RATE}/>
+                    //             <input value={item.PRICE}/>
+                    //            </div>)
+                    //     })                  
+                        
+                    //      return html;
+
+                     return JSON.stringify(cell)
+                    },                    
+                    filter: this.state.toggleFilter ? textFilter() : false,
+                    editor:{
+                        type:Type.TEXTAREA
+                    },
+                    editable:false
+                    
+
+                    };
                 }
+               
                 else {
                     return {
                         dataField: key,
@@ -295,7 +305,7 @@ class Employee extends Component {
                 formatter: this.actionButton,
                 editable: false,
                 headerStyle: () => {
-                    return { width: "8%" };
+                    return { width: "6%" };
                 },
             });
 
@@ -308,7 +318,7 @@ class Employee extends Component {
         return (
             <Container fluid className="app-container">
                 <Card>
-                    <Card.Header as="span">Employee
+                    <Card.Header as="span">Product
                     <ButtonGroup size="sm" style={{ float: "right", marginBottom: "2px" }}>
                             <Button variant="success" size="sm" onClick={() => { this.addNewEmpltyRecord() }}><FaPlusCircle />  Add New</Button>
                             <Button variant="success" size="sm" onClick={() => { this.toggleFilter() }}><FaFilter />  Filter</Button>
@@ -318,20 +328,20 @@ class Employee extends Component {
                     <Card.Body>
 
                         {
-                            this.props.employee !== undefined && this.props.employee !== null &&
-                                this.props.employee.data !== undefined && this.props.employee.data !== null ? (
+                            this.props.product !== undefined && this.props.product !== null &&
+                                this.props.product.data !== undefined && this.props.product.data !== null ? (
                                     <div>
                                         <BootstrapTable
-                                            keyField="EMP_ID"
-                                            data={this.props.employee.data}
-                                            columns={this.getTableColumn(this.props.employee.data[0])}
+                                            keyField="PRODUCT_ID"
+                                            data={this.props.product.data}
+                                            columns={this.getTableColumn(this.props.product.data[0])}
                                             striped
                                             bootstrap4
                                             hover
                                             condensed
                                             tabIndexCell
                                             filter={filterFactory()}
-                                            pagination={paginationFactory(pageinationOptions(this.props.employee.data.length))}
+                                            pagination={paginationFactory(pageinationOptions(this.props.product.data.length))}
                                             headerWrapperClasses="tbl-head"
                                             cellEdit={cellEditFactory({
                                                 mode: 'click',
@@ -351,14 +361,14 @@ class Employee extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
     setInProgress: flag => dispatch({ type: IN_PROGRESS, payload: flag }),
-    listEmployee: data => dispatch({ type: SET_EMPLOYEE, payload: data }),
-    addNewEmpltyRecord: data => dispatch({ type: SET_EMPLOYEE, payload: data })
+    listProduct: data => dispatch({ type: SET_PRODUCT, payload: data }),
+    addNewEmpltyRecord: data => dispatch({ type: SET_PRODUCT, payload: data })
 });
 
 const mapStateToProps = (state) => ({
     inProgress: state.config.inProgress,
     configuration: state.config.configuration,
-    employee: state.emp.employee
+    product: state.product.product
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Employee);
+export default connect(mapStateToProps, mapDispatchToProps)(Product);

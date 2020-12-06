@@ -21,13 +21,47 @@ export const getTableColumn = (data) => {
 export const ACTIVE_STATUS_OPTIONS = [
   {
     value: true,
-    label: "true"
+    label: "Active"
   },
   {
     value: false,
-    label: "false"
+    label: "Inactive"
   }
 ];
+
+
+export const PROPERTY_TYPES_OPTIONS = [
+  {
+    value: "UNIT",
+    label: "UNIT"
+  },
+  {
+    value: "EMPLOYEE_DESIGNATION",
+    label: "EMPLOYEE_DESIGNATION"
+  },
+  {
+    value: "ID_PROOF",
+    label: "ID_PROOF"
+  },
+  {
+    value: "SHIPMENT_STATUS",
+    label: "SHIPMENT_STATUS"
+  },
+  {
+    value: "PAYMENT_MODE",
+    label: "PAYMENT_MODE"
+  },
+  {
+    value :"ENTRY_STATUS",
+    label :"ENTRY_STATUS"
+  },
+  {
+    value :"COMPANY",
+    label :"COMPANY"
+  }
+  
+];
+
 
 
 export const pageinationOptions = (total) => {
