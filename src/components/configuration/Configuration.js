@@ -293,7 +293,8 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
     inProgress: state.config.inProgress,
-    configuration: state.config.configuration
+    configuration: state.config.configuration,
+    loginUser:state.auth.loginUser
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Configuration);

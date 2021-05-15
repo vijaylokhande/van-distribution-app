@@ -1,8 +1,8 @@
 import React ,{Component}from 'react';
 import MainContainer from '../container/MainContainer';
 import Footer from './footer/Footer';
-import Header from './header/Header';
 import Menu from './menu/Menu';
+import Auth from './Auth';
 import { BrowserRouter } from "react-router-dom";
 import {Spinner} from 'react-bootstrap';
 import {IN_PROGRESS,SET_APP_CONFIGURATION} from '../constants/ActionConstants';
@@ -12,8 +12,8 @@ import { getCall } from '../service/RestClient';
 
 class Main extends Component{
 
-  componentDidMount(){
-    this.listConfiguration();
+  componentDidMount(){    
+      this.listConfiguration();    
   }
 
   
@@ -38,17 +38,20 @@ class Main extends Component{
     return (
       <div> 
           <BrowserRouter>
-            {/* <div><Header></Header></div> */}
-            <div><Menu></Menu></div>        
-            <div><MainContainer></MainContainer></div>
-            <div><Footer></Footer></div>              
-            {
-            this.props.inProgress ?            
+            {this.props.loginUser.token===undefined? <Auth></Auth>: 
+            <div>
+              <div><Menu></Menu></div>        
+              <div><MainContainer></MainContainer></div>
+              <div><Footer></Footer></div>  
+                     
+            {  this.props.inProgress ?            
             <div id="bd" className="bd">
             <Spinner animation="border" variant="warning" className="center-pos" ><span className="sr-only">Loading...</span></Spinner>
             </div>
             :null
             }
+            </div>
+          }
           </BrowserRouter>         
       </div>
     );
@@ -59,6 +62,7 @@ const mapDispatchToProps=(dispatch) =>({
   listConfiguration: data => dispatch({ type: SET_APP_CONFIGURATION, payload: data })        
 });
 const mapStateToProps = (state) => ({
-inProgress:state.config.inProgress
+inProgress:state.config.inProgress,
+loginUser:state.auth.loginUser
 });
 export default connect(mapStateToProps,mapDispatchToProps)(Main);

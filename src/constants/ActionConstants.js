@@ -6,3 +6,9 @@ export const SET_CUSTOMER="SET_CUSTOMER";
 export const SET_WAREHOUSE = "SET_WAREHOUSE";
 export const IN_PROGRESS = "IN_PROGRESS";
 export const MESSAGE_FLAG="MESSAGE_DATA";
+export const SET_LOGIN_USER="SET_LOGIN_USER";
+
+export const ROLE={
+    ADMIN:'admin',
+    USER:'user'
+}

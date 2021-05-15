@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { getCall, putCall, postCall, deleteCall } from '../../service/RestClient';
 import { Container, Card, Button, ButtonGroup , Badge } from 'react-bootstrap';
-import { IN_PROGRESS } from '../../constants/ActionConstants';
+import { IN_PROGRESS , ROLE } from '../../constants/ActionConstants';
 import { connect } from "react-redux";
 import { LIST_EMPLOYEE } from '../../constants/AppConstants';
 import { SET_EMPLOYEE } from '../../constants/ActionConstants';
@@ -12,6 +12,7 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import _ from 'underscore';
+
 
 import { FaFilter, FaPlusCircle, FaSave, FaTrash } from 'react-icons/fa'
 
@@ -34,7 +35,7 @@ class Employee extends Component {
 
     listEmployee = () => {
         this.props.setInProgress(true);
-        getCall(LIST_EMPLOYEE).then(res => {
+        getCall(LIST_EMPLOYEE,this.props.loginUser.token).then(res => {
             if (res.status === 200) {
                 this.props.listEmployee(res.data);
                 this.props.setInProgress(false);
@@ -103,7 +104,7 @@ class Employee extends Component {
                 }
                 data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
 
-                postCall(LIST_EMPLOYEE, data).then(res => {
+                postCall(LIST_EMPLOYEE, data,this.props.loginUser.token).then(res => {
                     if (res.status === 201) {
                         this.listEmployee();
                         this.props.setInProgress(false);
@@ -137,7 +138,7 @@ class Employee extends Component {
                 }
                 data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
 
-                putCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID), data).then(res => {
+                putCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID), data,this.props.loginUser.token).then(res => {
                     if (res.status === 200) {
                         this.listEmployee();
                         this.props.setInProgress(false);
@@ -164,7 +165,7 @@ class Employee extends Component {
             }
             else {  // delete from db                
                 this.props.setInProgress(true);
-                deleteCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID)).then(res => {
+                deleteCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID),this.props.loginUser.token).then(res => {
                     if (res.status === 200) {
                         this.listEmployee();
                         this.props.setInProgress(false);
@@ -189,7 +190,7 @@ class Employee extends Component {
     actionButton = (cell, row, rowIndex) => {
         return (
             <ButtonGroup size="sm">
-                <Button variant="success" size="sm" onClick={() => { this.updateAndSave(cell, row, rowIndex) }}><FaSave /></Button>
+              { this.props.loginUser.EMP_ROLE == "admin"?  <Button variant="success" size="sm" onClick={() => { this.updateAndSave(cell, row, rowIndex) }}><FaSave /></Button>:null}
                 <Button variant="danger" size="sm" onClick={() => { this.deleteAndSave(cell, row, rowIndex) }}><FaTrash /></Button>
             </ButtonGroup>
         )
@@ -290,14 +291,17 @@ class Employee extends Component {
             }
             );
 
-            columnsArray.push({
-                text: "ACTION",
-                formatter: this.actionButton,
-                editable: false,
-                headerStyle: () => {
-                    return { width: "8%" };
-                },
-            });
+            if(this.props.loginUser.EMP_ROLE === ROLE.ADMIN ){
+                columnsArray.push({
+                    text: "ACTION",
+                    formatter: this.actionButton,
+                    editable: false,
+                    headerStyle: () => {
+                        return { width: "8%" };
+                    },
+                });
+            }
+
 
             return columnsArray
         }
@@ -310,9 +314,9 @@ class Employee extends Component {
                 <Card>
                     <Card.Header as="span">Employee
                     <ButtonGroup size="sm" style={{ float: "right", marginBottom: "2px" }}>
-                            <Button variant="success" size="sm" onClick={() => { this.addNewEmpltyRecord() }}><FaPlusCircle />  Add New</Button>
+                        { this.props.loginUser.EMP_ROLE == "admin"?<Button variant="success" size="sm" onClick={() => { this.addNewEmpltyRecord() }}><FaPlusCircle />  Add New</Button>:null}
                             <Button variant="success" size="sm" onClick={() => { this.toggleFilter() }}><FaFilter />  Filter</Button>
-                            <Button variant="success" size="sm" onClick={() => { this.saveAll() }}><FaSave />  Save All</Button>
+                        { this.props.loginUser.EMP_ROLE == "admin"?<Button variant="success" size="sm" onClick={() => { this.saveAll() }}><FaSave />  Save All</Button>:null}
                         </ButtonGroup>
                     </Card.Header>
                     <Card.Body>
@@ -333,7 +337,8 @@ class Employee extends Component {
                                             filter={filterFactory()}
                                             pagination={paginationFactory(pageinationOptions(this.props.employee.data.length))}
                                             headerWrapperClasses="tbl-head"
-                                            cellEdit={cellEditFactory({
+                                            cellEdit= {                                       
+                                            cellEditFactory({
                                                 mode: 'click',
                                                 blurToSave: true
                                             })}
@@ -358,7 +363,8 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
     inProgress: state.config.inProgress,
     configuration: state.config.configuration,
-    employee: state.emp.employee
+    employee: state.emp.employee,    
+    loginUser:state.auth.loginUser
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Employee);
