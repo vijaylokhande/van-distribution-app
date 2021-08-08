@@ -3,7 +3,7 @@ import {
 } from '../constants/ActionConstants';
 
 const initialState = {
-    van: []
+    warehouse: []
 };
 
 function warehouseReducer(state = initialState, action) {

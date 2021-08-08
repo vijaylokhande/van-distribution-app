@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { LIST_EMPLOYEE } from '../../constants/AppConstants';
 import { SET_EMPLOYEE } from '../../constants/ActionConstants';
 
-import { pageinationOptions, ACTIVE_STATUS_OPTIONS } from '../../util/tableUtil'
+import { pageinationOptions } from '../../util/tableUtil'
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
@@ -22,7 +22,19 @@ class Employee extends Component {
         super(props);
         this.state = {
             columns: [],
-            toggleFilter: false
+            toggleFilter: false,
+            columnHeader : {
+                empId :"ID",
+                empName:"NAME",
+                empContact:"CONTACT",
+                empAddress:"ADDRESS",
+                designationId:"DESIGNATION",
+                empWarehouseId:"WAREHOUSE",
+                idProofType:"IDPROOF",
+                idProofDetails:"IDPROOF DETAILS",
+                empDob:"DOB",
+                activeStatus:"STATUS"
+            }
         };
 
         this.updateAndSave.bind(this);
@@ -52,27 +64,27 @@ class Employee extends Component {
 
 
     getConfiguration = (type) => {
-        var array = _.filter(this.props.configuration.data, function (object) { return object.PROPERTY_TYPE === type; });
+        let array = _.filter(this.props.configuration, function (object) { return object.propertyType === type; });
         return _.map(array, function (object) {
-           return { value: object.PROPERTY_ID, label: object.PROPERTY_VALUE };
+           return { value: object.propertyId, label: object.propertyValue};
         });
     }
 
     addNewEmpltyRecord = () => {
 
         this.props.setInProgress(true);
-        var employeeData = this.props.employee;
-        employeeData.data.unshift({
-            EMP_ID: null,
-            EMP_NAME: null,
-            EMP_CONTACT: null,
-            EMP_ADDRESS: null,
-            DESIGNATION_ID: null,
-            EMP_WAREHOUSE_ID: null,
-            ID_PROOF_TYPE: null,
-            ID_PROOF_DETAILS: null,
-            EMP_DOB: Date.now(),
-            ACTIVE_STATUS: false
+        let employeeData = this.props.employee;
+        employeeData.unshift({
+            empId: null,
+            empName: null,
+            empContact: null,
+            empAddress: null,
+            designationId: null,
+            empWarehouseId: null,
+            idProofType: null,
+            idProofDetails: null,
+            empDob: Date.now(),
+            activeStatus: false
         });
         this.props.addNewEmpltyRecord(employeeData);
         this.props.setInProgress(false);
@@ -85,27 +97,27 @@ class Employee extends Component {
     updateAndSave = (cell, row, rowIndex) => {
         this.props.setInProgress(true);
         if (row !== null && row !== undefined) {
-            if (row.EMP_ID === null || row.EMP_ID === undefined || row.EMP_ID === "") { // add new record
-                var data = {};
-                data["EMP_ID"] = row.EMP_ID;
-                data["EMP_NAME"] = row.EMP_NAME;
-                data["EMP_CONTACT"] = row.EMP_CONTACT;
-                data["EMP_ADDRESS"] = row.EMP_ADDRESS;
-                data["ID_PROOF_TYPE"] = parseInt(row.ID_PROOF_TYPE);
-                data["ID_PROOF_DETAILS"] = row.ID_PROOF_DETAILS;
-                data["EMP_DOB"] = row.EMP_DOB;
-                data["DESIGNATION_ID"] = parseInt(row.DESIGNATION_ID);
-                data["EMP_WAREHOUSE_ID"] = parseInt(row.EMP_WAREHOUSE_ID);
+            if (row.empId === null || row.empId === undefined || row.empId === "") { // add new record
+                let data = {};
+                data["empId"] = row.empId;
+                data["empName"] = row.empName;
+                data["empContact"] = row.empContact;
+                data["empAddress"] = row.empAddress;
+                data["idProofType"] = row.idProofType;
+                data["idProofDetails"] = row.idProofDetails;
+                data["empDob"] = row.empDob;
+                data["designationId"] = row.designationId;
+                data["empWarehouseId"] = row.empWarehouseId;
 
-                var _typeof = typeof row.ACTIVE_STATUS
+                let _typeof = typeof row.activeStatus
                 if (_typeof === "string") {
-                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
-                    else { row.ACTIVE_STATUS = false };
+                    if (row.activeStatus === "true") { row.activeStatus = true; }
+                    else { row.activeStatus = false };
                 }
-                data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
+                data["activeStatus"] = row.activeStatus;
 
                 postCall(LIST_EMPLOYEE, data,this.props.loginUser.token).then(res => {
-                    if (res.status === 201) {
+                    if (res.status === 201 || res.status === 200) {
                         this.listEmployee();
                         this.props.setInProgress(false);
                     }
@@ -119,26 +131,26 @@ class Employee extends Component {
                 });
             }
             else { // update record
-                var data = {};
+                let data = {};
 
-                data["EMP_ID"] = row.EMP_ID;
-                data["EMP_NAME"] = row.EMP_NAME;
-                data["EMP_CONTACT"] = row.EMP_CONTACT;
-                data["EMP_ADDRESS"] = row.EMP_ADDRESS;
-                data["ID_PROOF_TYPE"] = parseInt(row.ID_PROOF_TYPE);
-                data["ID_PROOF_DETAILS"] = row.ID_PROOF_DETAILS;
-                data["EMP_DOB"] = row.EMP_DOB;
-                data["DESIGNATION_ID"] = parseInt(row.DESIGNATION_ID);
-                data["EMP_WAREHOUSE_ID"] = parseInt(row.EMP_WAREHOUSE_ID);
+                data["empId"] = row.empId;
+                data["empName"] = row.empName;
+                data["empContact"] = row.empContact;
+                data["empAddress"] = row.empAddress;
+                data["idProofType"] = row.idProofType;
+                data["idProofDetails"] = row.idProofDetails;
+                data["empDob"] = row.empDob;
+                data["designationId"] = row.designationId;
+                data["empWarehouseId"] = row.empWarehouseId;
 
-                var _typeof = typeof row.ACTIVE_STATUS
+                let _typeof = typeof row.activeStatus
                 if (_typeof === "string") {
-                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
-                    else { row.ACTIVE_STATUS = false };
+                    if (row.activeStatus === "true") { row.activeStatus = true; }
+                    else { row.activeStatus = false };
                 }
-                data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
+                data["activeStatus"] = row.activeStatus;
 
-                putCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID), data,this.props.loginUser.token).then(res => {
+                putCall(LIST_EMPLOYEE.concat("/").concat(row.empId), data,this.props.loginUser.token).then(res => {
                     if (res.status === 200) {
                         this.listEmployee();
                         this.props.setInProgress(false);
@@ -160,12 +172,14 @@ class Employee extends Component {
 
     deleteAndSave = (cell, row, rowIndex) => {
         if (row !== null && row !== undefined) {
-            if (row.EMP_ID === null || row.EMP_ID === undefined || row.EMP_ID === "") { // delete from cache
+            if (row.empId === null || row.empId === undefined || row.empId === "") { // delete from cache
+                this.props.setInProgress(true);
                 this.listEmployee();
+                this.props.setInProgress(false);
             }
             else {  // delete from db                
                 this.props.setInProgress(true);
-                deleteCall(LIST_EMPLOYEE.concat("/").concat(row.EMP_ID),this.props.loginUser.token).then(res => {
+                deleteCall(LIST_EMPLOYEE.concat("/").concat(row.empId),this.props.loginUser.token).then(res => {
                     if (res.status === 200) {
                         this.listEmployee();
                         this.props.setInProgress(false);
@@ -190,7 +204,7 @@ class Employee extends Component {
     actionButton = (cell, row, rowIndex) => {
         return (
             <ButtonGroup size="sm">
-              { this.props.loginUser.EMP_ROLE == "admin"?  <Button variant="success" size="sm" onClick={() => { this.updateAndSave(cell, row, rowIndex) }}><FaSave /></Button>:null}
+              { this.props.loginUser.EMP_ROLE === "admin"?  <Button variant="success" size="sm" onClick={() => { this.updateAndSave(cell, row, rowIndex) }}><FaSave /></Button>:null}
                 <Button variant="danger" size="sm" onClick={() => { this.deleteAndSave(cell, row, rowIndex) }}><FaTrash /></Button>
             </ButtonGroup>
         )
@@ -201,11 +215,11 @@ class Employee extends Component {
             var keys = Object.keys(data);
 
             var columnsArray = keys.map(key => {
-                if (key === 'ID_PROOF_TYPE' || key === 'DESIGNATION_ID') {
+                if (key === 'idProofType' || key === 'designationId') {
 
                     var obj = {
                         dataField: key,
-                        text: key,
+                        text: this.state.columnHeader[key],
                         sort: true,
                         filter: this.state.toggleFilter ? textFilter() : false,
                         editor: {
@@ -216,7 +230,7 @@ class Employee extends Component {
                             if(cell !== undefined && cell !==null && cell !==""){                          
                             
                             var option=_.find(obj.editor.options,function(opn){                                  
-                                return opn.value==cell;                                
+                                return opn.value===cell;                                
                             }); 
 
                             if(option!==undefined)           
@@ -225,18 +239,18 @@ class Employee extends Component {
                         }
                     };
 
-                    if (key === 'ID_PROOF_TYPE') {
+                    if (key === 'idProofType') {
                         obj.editor.options = this.getConfiguration("ID_PROOF");                        
                     }
-                    else if (key === 'DESIGNATION_ID') {
+                    else if (key === 'designationId') {
                         obj.editor.options = this.getConfiguration("EMPLOYEE_DESIGNATION");
                     }                    
                     return obj;
                 }
-                else if(key === 'ACTIVE_STATUS'){
+                else if(key === 'activeStatus'){
                     return {
                     dataField: key,
-                    text: key,
+                    text: this.state.columnHeader[key],
                     sort: true,
                     type:'bool',
                     editor :{
@@ -249,10 +263,10 @@ class Employee extends Component {
                     filter: this.state.toggleFilter ? textFilter() : false
                     };
                 }
-                else if (key === 'EMP_DOB') {
+                else if (key === 'empDob') {
                     return {
                         dataField: key,
-                        text: key,
+                        text: this.state.columnHeader[key],
                         type:'date',
                         filter: this.state.toggleFilter ? textFilter() : false,                        
                         sort: true,
@@ -280,12 +294,21 @@ class Employee extends Component {
                         editable: true
                     }
                 }
+                
                 else {
                     return {
                         dataField: key,
-                        text: key,
+                        text: this.state.columnHeader[key],
                         sort: true,
-                        filter: this.state.toggleFilter ? textFilter() : false
+                        filter: this.state.toggleFilter ? textFilter() : false,
+                        headerStyle: () => {
+                            if(key==='empId')
+                                return { width: "4%" };                            
+                            else if(key==='activeStatus')
+                                return { width: "6%" };                                
+                            else
+                                return { width: "10%" };                            
+                        }
                     }
                 }
             }
@@ -297,7 +320,7 @@ class Employee extends Component {
                     formatter: this.actionButton,
                     editable: false,
                     headerStyle: () => {
-                        return { width: "8%" };
+                        return { width: "7%" };
                     },
                 });
             }
@@ -312,30 +335,31 @@ class Employee extends Component {
         return (
             <Container fluid className="app-container">
                 <Card>
-                    <Card.Header as="span">Employee
+                    <Card.Header as="span">Employee 
                     <ButtonGroup size="sm" style={{ float: "right", marginBottom: "2px" }}>
-                        { this.props.loginUser.EMP_ROLE == "admin"?<Button variant="success" size="sm" onClick={() => { this.addNewEmpltyRecord() }}><FaPlusCircle />  Add New</Button>:null}
+                    
+                        { this.props.loginUser.EMP_ROLE === "admin"?<Button variant="success" size="sm" onClick={() => { this.addNewEmpltyRecord() }}><FaPlusCircle />  Add New</Button>:null}
                             <Button variant="success" size="sm" onClick={() => { this.toggleFilter() }}><FaFilter />  Filter</Button>
-                        { this.props.loginUser.EMP_ROLE == "admin"?<Button variant="success" size="sm" onClick={() => { this.saveAll() }}><FaSave />  Save All</Button>:null}
+                        { this.props.loginUser.EMP_ROLE === "admin"?<Button variant="success" size="sm" onClick={() => { this.saveAll() }}><FaSave />  Save All</Button>:null}
                         </ButtonGroup>
                     </Card.Header>
                     <Card.Body>
 
                         {
-                            this.props.employee !== undefined && this.props.employee !== null &&
-                                this.props.employee.data !== undefined && this.props.employee.data !== null ? (
+                            this.props.employee !== undefined && this.props.employee !== null && this.props.employee.length > 0 ? (
                                     <div>
-                                        <BootstrapTable
-                                            keyField="EMP_ID"
-                                            data={this.props.employee.data}
-                                            columns={this.getTableColumn(this.props.employee.data[0])}
+                                        <BootstrapTable                                            
+                                            keyField="empId"
+                                            data={this.props.employee}
+                                            columns={this.getTableColumn(this.props.employee[0])}
                                             striped
                                             bootstrap4
                                             hover
+                                            responsive
                                             condensed
                                             tabIndexCell
                                             filter={filterFactory()}
-                                            pagination={paginationFactory(pageinationOptions(this.props.employee.data.length))}
+                                            pagination={paginationFactory(pageinationOptions(this.props.employee.length))}
                                             headerWrapperClasses="tbl-head"
                                             cellEdit= {                                       
                                             cellEditFactory({

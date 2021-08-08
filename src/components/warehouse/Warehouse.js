@@ -36,27 +36,26 @@ class Warehouse extends Component{
             <Card.Header as="span">Warehouse</Card.Header>
             <Card.Body>
             {
-                            this.props.warehouse !== undefined && this.props.warehouse !== null &&
-                                this.props.warehouse.data !== undefined && this.props.warehouse.data !== null ? (
+                            this.props.warehouse !== undefined && this.props.warehouse !== null ? (
                                     <Table responsive striped bordered hover size="sm" >
                                         <thead>
                                             <tr>
-                                            <th>WAREHOUSE_ID</th>
-                                            <th>WAREHOUSE_NAME</th>
-                                            <th>WAREHOUSE_ADDRESS</th>
-                                            <th>WAREHOUSE_CONTACT</th>
-                                            <th>ACTIVE_STATUS</th>
+                                            <th>Warehouse Id</th>
+                                            <th>Warehouse Name</th>
+                                            <th>Warehouse Address</th>
+                                            <th>Warehouse Contact</th>
+                                            <th>Active Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {this.props.warehouse.data.map((data, i) => {
+                                            {this.props.warehouse.map((data, i) => {
                                                 return (
                                                     <tr>
-                                                        <td>{data.WAREHOUSE_ID}</td>
-                                                        <td>{data.WAREHOUSE_NAME}</td>
-                                                        <td>{data.WAREHOUSE_ADDRESS}</td>       
-                                                        <td>{data.WAREHOUSE_CONTACT}</td>                                                   
-                                                        <td>{data.ACTIVE_STATUS ? "Active" : "Inactive"}</td>
+                                                        <td>{data.warehouseId}</td>
+                                                        <td>{data.warehouseName}</td>
+                                                        <td>{data.warehouseAddress}</td>       
+                                                        <td>{data.warehouseContact}</td>                                                   
+                                                        <td>{data.activeStatus ? "Active" : "Inactive"}</td>
                                                     </tr>)
                                             })
                                             }

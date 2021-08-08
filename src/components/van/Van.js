@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { LIST_VAN } from '../../constants/AppConstants';
 import { SET_VAN } from '../../constants/ActionConstants';
 
-import { pageinationOptions, ACTIVE_STATUS_OPTIONS } from '../../util/tableUtil'
+import { pageinationOptions } from '../../util/tableUtil'
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
@@ -21,7 +21,13 @@ class Van extends Component {
         super(props);
         this.state = {
             columns: [],
-            toggleFilter: false
+            toggleFilter: false,
+            columnHeader : {
+                vanId: "ID",
+                vanName : "NAME",
+                vanNumber : "NUMBER",
+                activeStatus : "STATUS"
+            }
         };
 
         this.updateAndSave.bind(this);
@@ -30,10 +36,10 @@ class Van extends Component {
 
     componentDidMount() {
         this.listVan();
-    }
+    } 
 
     getConfiguration = (type) => {
-        var array = _.filter(this.props.configuration.data, function (object) { return object.PROPERTY_TYPE === type; });
+        let array = _.filter(this.props.configuration.data, function (object) { return object.PROPERTY_TYPE === type; });
         return _.map(array, function (object) {
             return { value: object.PROPERTY_ID, label: object.PROPERTY_VALUE };
         });
@@ -44,6 +50,7 @@ class Van extends Component {
         getCall(LIST_VAN).then(res => {
             if (res.status === 200) {
                 this.props.listVan(res.data);
+                console.log(this.props.van)
                 this.props.setInProgress(false);
             }
             else {
@@ -59,12 +66,12 @@ class Van extends Component {
 
     addNewEmpltyRecord = () => {
         this.props.setInProgress(true);
-        var vanData = this.props.van;
-        vanData.data.unshift({
-            VAN_ID: null,
-            VAN_NUMBER: null,
-            VAN_NAME: null,
-            ACTIVE_STATUS: false
+        let vanData = this.props.van;
+        vanData.data.unshift({            
+            vanId: null,
+            vanNumber: null,
+            vanName: null,
+            activeStatus: false              
         });
         this.props.addNewEmpltyRecord(vanData);
         this.props.setInProgress(false);
@@ -77,18 +84,18 @@ class Van extends Component {
     updateAndSave = (cell, row, rowIndex) => {
         this.props.setInProgress(true);
         if (row !== null && row !== undefined) {
-            if (row.VAN_ID === null || row.VAN_ID === undefined || row.VAN_ID === "") { // add new record
-                var data = {};
-                data["VAN_ID"] = row.VAN_ID;
-                data["VAN_NAME"] = row.VAN_NAME;
-                data["VAN_NUMBER"] = row.VAN_NUMBER;
+            if (row.vanId === null || row.vanId === undefined || row.vanId === "") { // add new record
+                let data = {};
+                data["vanId"] = row.vanId;
+                data["vanName"] = row.vanName;
+                data["vanNumber"] = row.vanNumber;
 
-                var _typeof = typeof row.ACTIVE_STATUS
+                let _typeof = typeof row.activeStatus
                 if (_typeof === "string") {
-                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
-                    else { row.ACTIVE_STATUS = false };
+                    if (row.activeStatus === "true") { row.activeStatus = true; }
+                    else { row.activeStatus = false };
                 }
-                data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
+                data["activeStatus"] = row.activeStatus;
 
                 postCall(LIST_VAN, data).then(res => {
                     if (res.status === 201) {
@@ -105,20 +112,20 @@ class Van extends Component {
                     });
             }
             else { // update record
-                var data = {};
+                let data = {};
 
-                data["VAN_ID"] = row.VAN_ID;
-                data["VAN_NAME"] = row.VAN_NAME;
-                data["VAN_NUMBER"] = row.VAN_NUMBER;
+                data["vanId"] = row.vanId;
+                data["vanName"] = row.vanName;
+                data["vanNumber"] = row.vanNumber;
 
-                var _typeof = typeof row.ACTIVE_STATUS
+                let _typeof = typeof row.activeStatus
                 if (_typeof === "string") {
-                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
-                    else { row.ACTIVE_STATUS = false };
+                    if (row.activeStatus === "true") { row.activeStatus = true; }
+                    else { row.activeStatus = false };
                 }
-                data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
+                data["activeStatus"] = row.activeStatus;
 
-                putCall(LIST_VAN.concat("/").concat(row.VAN_ID), data).then(res => {
+                putCall(LIST_VAN.concat("/").concat(row.vanId), data).then(res => {
                     if (res.status === 200) {
                         this.listVan();
                         this.props.setInProgress(false);
@@ -140,12 +147,12 @@ class Van extends Component {
 
     deleteAndSave = (cell, row, rowIndex) => {
         if (row !== null && row !== undefined) {
-            if (row.VAN_ID === null || row.VAN_ID === undefined || row.VAN_ID === "") { // delete from cache
+            if (row.vanId === null || row.vanId === undefined || row.vanId === "") { // delete from cache
                 this.listEmployee();
             }
             else {  // delete from db                
                 this.props.setInProgress(true);
-                deleteCall(LIST_VAN.concat("/").concat(row.VAN_ID)).then(res => {
+                deleteCall(LIST_VAN.concat("/").concat(row.vanId)).then(res => {
                     if (res.status === 200) {
                         this.listEmployee();
                         this.props.setInProgress(false);
@@ -178,13 +185,12 @@ class Van extends Component {
 
     getTableColumn = (data) => {
         if (data !== null && data !== undefined) {
-            var keys = Object.keys(data);
-
-            var columnsArray = keys.map(key => {
-                if (key === 'ACTIVE_STATUS') {
+            let keys = Object.keys(data);
+            let columnsArray = keys.map(key => {
+                if (key === 'activeStatus') {
                     return {
                         dataField: key,
-                        text: key,
+                        text: this.state.columnHeader[key],
                         sort: true,
                         type: 'bool',
                         editor: {
@@ -200,7 +206,7 @@ class Van extends Component {
                 else {
                     return {
                         dataField: key,
-                        text: key,
+                        text: this.state.columnHeader[key],
                         sort: true,
                         filter: this.state.toggleFilter ? textFilter() : false
                     }
@@ -216,7 +222,6 @@ class Van extends Component {
                     return { width: "8%" };
                 },
             });
-
             return columnsArray
         }
         return [];
@@ -231,35 +236,33 @@ class Van extends Component {
             <Container fluid className="app-container">
                 <Card>
                     <Card.Header as="span">Van
-            <ButtonGroup size="sm" style={{ float: "right", marginBottom: "2px" }}>
+                        <ButtonGroup size="sm" style={{ float: "right", marginBottom: "2px" }}>
                             <Button variant="success" size="sm" onClick={() => { this.addNewEmpltyRecord() }}><FaPlusCircle />  Add New</Button>
                             <Button variant="success" size="sm" onClick={() => { this.toggleFilter() }}><FaFilter />  Filter</Button>
                             <Button variant="success" size="sm" onClick={() => { this.saveAll() }}><FaSave />  Save All</Button>
                         </ButtonGroup>
                     </Card.Header>
                     <Card.Body>
-                        {
-                            this.props.van !== undefined && this.props.van !== null &&
-                                this.props.van.data !== undefined && this.props.van.data !== null ? (
+                        { this.props.van !== undefined && this.props.van !== null  && this.props.van.length > 0? (
                                     <div>
                                         <BootstrapTable
-                                            keyField="VAN_ID"
-                                            data={this.props.van.data}
-                                            columns={this.getTableColumn(this.props.van.data[0])}
+                                            keyField="vanId"
+                                            data={this.props.van}
+                                            columns={this.getTableColumn(this.props.van[0])}
                                             striped
                                             bootstrap4
                                             hover
                                             condensed
                                             tabIndexCell
                                             filter={filterFactory()}
-                                            pagination={paginationFactory(pageinationOptions(this.props.van.data.length))}
+                                            pagination={paginationFactory(pageinationOptions(this.props.van.length))}
                                             headerWrapperClasses="tbl-head"
                                             cellEdit={cellEditFactory({
                                                 mode: 'click',
                                                 blurToSave: true
                                             })}
-                                        />
-                                    </div>
+                                        /> 
+                                    </div> 
                                 ) :
                                 null
                         }

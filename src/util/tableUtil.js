@@ -21,11 +21,11 @@ export const getTableColumn = (data) => {
 export const ACTIVE_STATUS_OPTIONS = [
   {
     value: true,
-    label: "Active"
+    label: "ACTIVE"
   },
   {
     value: false,
-    label: "Inactive"
+    label: "INACTIVE"
   }
 ];
 

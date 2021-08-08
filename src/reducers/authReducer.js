@@ -3,7 +3,7 @@ import {
 } from '../constants/ActionConstants';
 
 const initialState = {
-    loginUser: {}
+    loginUser: {EMP_NAME:"ADMIN",EMP_ROLE:"admin"}
 };
 
 function authReducer(state = initialState, action) {

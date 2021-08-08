@@ -34,7 +34,7 @@ class Configuration extends Component {
         this.props.setInProgress(true);
         getCall(LIST_APP_CONFIGURATION).then(res => {
             if (res.status === 200) {
-                this.props.listConfiguration(res.data);
+                this.props.listConfiguration(res.data);                
                 this.props.setInProgress(false);
             }
             else {
@@ -51,16 +51,15 @@ class Configuration extends Component {
 
         this.props.setInProgress(true);
         var configuration = this.props.configuration;
-        configuration.data.unshift({
-            PROPERTY_ID: null,
-            PROPERTY_TYPE: null,
-            PROPERTY_VALUE: null,
-            ACTIVE_STATUS: false
+        configuration.unshift({
+            propertyId: null,
+            propertyType: null,
+            propertyValue: null,
+            activeStatus: false
         });
         this.props.addNewEmpltyRecord(configuration);
         this.props.setInProgress(false);
     }
-
 
     toggleFilter = () => {
         this.setState({ toggleFilter: !this.state.toggleFilter });
@@ -79,17 +78,17 @@ class Configuration extends Component {
     updateAndSave = (cell, row, rowIndex) => {
         this.props.setInProgress(true);
         if (row !== null && row !== undefined) {
-            if (row.PROPERTY_ID === null || row.PROPERTY_ID === undefined || row.PROPERTY_ID === "") { // add new record
+            if (row.propertyId === null || row.propertyId === undefined || row.propertyId === "") { // add new record
                 var data = {};
-                data["PROPERTY_TYPE"] = row.PROPERTY_TYPE;
-                data["PROPERTY_VALUE"] = row.PROPERTY_VALUE;
+                data["propertyType"] = row.propertyType;
+                data["propertyValue"] = row.propertyValue;
 
-                var _typeof = typeof row.ACTIVE_STATUS
+                var _typeof = typeof row.activeStatus
                 if (_typeof === "string") {
-                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
-                    else { row.ACTIVE_STATUS = false };
+                    if (row.activeStatus === "true") { row.activeStatus = true; }
+                    else { row.activeStatus = false };
                 }
-                data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
+                data["activeStatus"] = row.activeStatus;
 
                 postCall(LIST_APP_CONFIGURATION, data).then(res => {
                     if (res.status === 201) {
@@ -107,18 +106,18 @@ class Configuration extends Component {
             }
             else { // update record
                 var data = {};
-                data["PROPERTY_ID"] = row.PROPERTY_ID;
-                data["PROPERTY_TYPE"] = row.PROPERTY_TYPE;
-                data["PROPERTY_VALUE"] = row.PROPERTY_VALUE;
+                data["propertyId"] = row.propertyId;
+                data["propertyType"] = row.propertyType;
+                data["propertyValue"] = row.propertyValue;
 
-                var _typeof = typeof row.ACTIVE_STATUS
+                var _typeof = typeof row.activeStatus
                 if (_typeof === "string") {
-                    if (row.ACTIVE_STATUS === "true") { row.ACTIVE_STATUS = true; }
-                    else { row.ACTIVE_STATUS = false };
+                    if (row.activeStatus === "true") { row.activeStatus = true; }
+                    else { row.activeStatus = false };
                 }
-                data["ACTIVE_STATUS"] = row.ACTIVE_STATUS;
+                data["activeStatus"] = row.activeStatus;
 
-                putCall(LIST_APP_CONFIGURATION.concat("/").concat(row.PROPERTY_ID), data).then(res => {
+                putCall(LIST_APP_CONFIGURATION.concat("/").concat(row.propertyId), data).then(res => {
                     if (res.status === 200) {
                         this.listConfiguration();
                         this.props.setInProgress(false);
@@ -141,12 +140,12 @@ class Configuration extends Component {
 
     deleteAndSave = (cell, row, rowIndex) => {
         if (row !== null && row !== undefined) {
-            if (row.PROPERTY_ID === null || row.PROPERTY_ID === undefined || row.PROPERTY_ID === "") { // delete from cache
+            if (row.propertyId === null || row.propertyId === undefined || row.propertyId === "") { // delete from cache
                 this.listConfiguration();
             }
             else {  // delete from db                
                 this.props.setInProgress(true);
-                deleteCall(LIST_APP_CONFIGURATION.concat("/").concat(row.PROPERTY_ID)).then(res => {
+                deleteCall(LIST_APP_CONFIGURATION.concat("/").concat(row.propertyId)).then(res => {
                     if (res.status === 200) {
                         this.listConfiguration();
                         this.props.setInProgress(false);
@@ -175,21 +174,16 @@ class Configuration extends Component {
         )
     };
 
-
-
-
     getTableColumn = (data) => {
         if (data !== null && data !== undefined) {
 
-
             var keys = Object.keys(data);
-
             var columnsArray = keys.map(key => {
 
-                if (key === 'ACTIVE_STATUS') {
+                if (key === 'activeStatus') {
                     return {
                         dataField: key,
-                        text: key,
+                        text: "STATUS",
                         sort: true,
                         type: 'bool',
                         editor: {
@@ -197,15 +191,15 @@ class Configuration extends Component {
                             value: 'true:false'
                         },
                         formatter: (cell) => {
-                            return cell ? (<Badge variant="success">Active</Badge>) : (<Badge variant="danger">InActive</Badge>)
+                            return cell ? (<Badge variant="success">ACTIVE</Badge>) : (<Badge variant="danger">INACTIVE</Badge>)
                         },
                         filter: this.state.toggleFilter ? textFilter() : false
                     };
                 }
-                else if (key === 'PROPERTY_TYPE') {
+                else if (key === 'propertyType') {
                     return {
-                        dataField: "PROPERTY_TYPE",
-                        text: "PROPERTY_TYPE",
+                        dataField: "propertyType",
+                        text: "PROPERTY TYPE",
                         sort: true,
                         editor: {
                             type: Type.SELECT,
@@ -214,6 +208,22 @@ class Configuration extends Component {
                         filter: this.state.toggleFilter ? textFilter() : false
                     };
                 }
+                else if(key === 'propertyId'){
+                    return {
+                        dataField: key,
+                        text: "PROPERTY ID",
+                        sort: true,
+                        filter: this.state.toggleFilter ? textFilter() : false
+                    };
+                }
+                else if(key === 'propertyValue'){
+                    return {
+                        dataField: key,
+                        text: "PROPERTY VALUE",
+                        sort: true,
+                        filter: this.state.toggleFilter ? textFilter() : false
+                    };
+                }                
                 else {
                     return {
                         dataField: key,
@@ -221,10 +231,7 @@ class Configuration extends Component {
                         sort: true,
                         filter: this.state.toggleFilter ? textFilter() : false
                     };
-
                 }
-
-
             });
 
             columnsArray.push({
@@ -232,8 +239,6 @@ class Configuration extends Component {
                 formatter: this.actionButton,
                 editable: false
             })
-
-
             return columnsArray
         }
         return [];
@@ -251,27 +256,27 @@ class Configuration extends Component {
                         </ButtonGroup>
                     </Card.Header>
                     <Card.Body>
-
                         {
-                            this.props.configuration !== undefined && this.props.configuration !== null &&
-                                this.props.configuration.data !== undefined && this.props.configuration.data !== null ? (
+                            this.props.configuration !== undefined && this.props.configuration !== null && this.props.configuration.length > 0 ? (
                                     <div>
                                         <BootstrapTable
-                                            keyField="PROPERTY_ID"
-                                            data={this.props.configuration.data}
-                                            columns={this.getTableColumn(this.props.configuration.data[0])}
+                                            keyField="propertyId"
+                                            data={this.props.configuration}
+                                            columns={this.getTableColumn(this.props.configuration[0])}
                                             striped
                                             hover
                                             condensed
                                             tabIndexCell
                                             bootstrap4
                                             filter={filterFactory()}
-                                            pagination={paginationFactory(pageinationOptions(this.props.configuration.data.length))}
+                                            pagination={paginationFactory(pageinationOptions(this.props.configuration.length))}
                                             headerWrapperClasses="tbl-head"
                                             cellEdit={cellEditFactory({
                                                 mode: 'click',
                                                 blurToSave: true
                                             })}
+                                            defaultSorted
+                                            
                                         />
                                     </div>
                                 ) :

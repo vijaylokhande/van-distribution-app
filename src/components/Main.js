@@ -38,7 +38,7 @@ class Main extends Component{
     return (
       <div> 
           <BrowserRouter>
-            {this.props.loginUser.token===undefined? <Auth></Auth>: 
+          {  /*{this.props.loginUser.token===undefined ? <Auth></Auth>: */ }
             <div>
               <div><Menu></Menu></div>        
               <div><MainContainer></MainContainer></div>
@@ -51,7 +51,7 @@ class Main extends Component{
             :null
             }
             </div>
-          }
+        { /*}*/ }
           </BrowserRouter>         
       </div>
     );
